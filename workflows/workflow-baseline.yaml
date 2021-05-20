@@ -1,0 +1,11 @@
+name: konakart-baseline
+
+tasks:
+- name: Performance test
+  operator: Executor
+  arguments:
+    command: "docker run --net=akamas_lab --rm --name jmeter -i -v $(pwd)/konakart-docker/jmeter/konakart:/tmp -w /tmp -p 9270:9270 chiabre/jmeter_plugins -t ramp_test_plan.jmx -JTARGET_HOST=target_host -JTHREADS=10 -JRAMP_SEC=120 -JRANDOM_DELAY_MAX_MS=0"
+    host:
+      hostname: target_host
+      username: ubuntu
+      key: /home/jsmith/.ssh/akamas.key

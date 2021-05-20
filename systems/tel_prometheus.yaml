@@ -1,0 +1,19 @@
+provider: Prometheus
+
+config:
+  address: target_host
+  port: 9090
+
+metrics:
+- metric: transactions_throughput
+  datasourceMetric: 'sum(rate(Ratio_success{instance=~"$INSTANCE$"}[30s]))'
+- metric: transactions_response_time
+  datasourceMetric: 'avg((rate(ResponseTime_sum{instance=~"$INSTANCE$",code="200"}[30s])/(rate(ResponseTime_count{instance=~"$INSTANCE$",code="200"}[30s])>0)))'
+- metric: transactions_response_time_p90
+  datasourceMetric: 'avg(ResponseTime{instance="$INSTANCE$", code="200", quantile="0.9"})'
+- metric: transactions_error_rate
+  datasourceMetric: 'sum(rate(Ratio_failure{instance="$INSTANCE$"}[30s]) ) / sum(rate(Ratio_total{instance=~"$INSTANCE$"}[30s]))'
+- metric: users
+  datasourceMetric: 'sum(jmeter_threads{instance=~"$INSTANCE$",state="active"})'
+- metric: cpu_used
+  datasourceMetric: 'rate(process_cpu_seconds_total{instance="$INSTANCE$"}[30s])'

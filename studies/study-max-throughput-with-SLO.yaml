@@ -1,0 +1,51 @@
+name: Optimize konakart throughput with response time SLO
+description: Tune the JVM to increase transaction throughput while keeping good performance
+system: konakart
+
+goal:
+  objective: maximize
+  function:
+    formula: konakart.transactions_throughput
+  constraints:
+    absolute:
+    - konakart.transactions_response_time <= 100    # 100ms service-level objective (SLO)
+
+windowing:
+  type: stability
+  stability:
+    metric: konakart.transactions_response_time
+    width: 2
+    maxStdDev: 1000000
+    when:
+      metric: konakart.transactions_throughput
+      is: max
+
+workflow: konakart-optimize
+
+parametersSelection:
+- name: jvm.jvm_gcType
+- name: jvm.jvm_maxHeapSize
+  domain: [32,1024]
+- name: jvm.jvm_newSize
+  domain: [16,1024]
+- name: jvm.jvm_survivorRatio
+- name: jvm.jvm_maxTenuringThreshold
+- name: jvm.jvm_parallelGCThreads
+  domain: [1,4]
+- name: jvm.jvm_concurrentGCThreads
+
+parameterConstraints:
+- name: "JVM max heap must always be greater than new size"
+  formula: jvm.jvm_maxHeapSize > jvm.jvm_newSize
+- name: "JVM GC concurrent threads must always be less than or equal to parallel"
+  formula: jvm.jvm_parallelGCThreads >= jvm.jvm_concurrentGCThreads
+
+steps:
+- name: baseline
+  type: baseline
+  values:
+    jvm.jvm_maxHeapSize: 256
+
+- name: optimize
+  type: optimize
+  numberOfExperiments: 50

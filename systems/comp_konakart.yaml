@@ -1,0 +1,7 @@
+name: konakart
+description: The konakart web application
+componentType: Web Application
+properties:
+  prometheus:
+    instance: jmeter
+    job: jmeter

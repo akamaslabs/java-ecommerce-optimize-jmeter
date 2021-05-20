@@ -1,0 +1,14 @@
+name: Baseline konakart
+description: A first study to validate the automated testing process
+system: konakart
+
+goal:
+  objective: maximize
+  function:
+    formula: konakart.transactions_throughput
+
+workflow: konakart-baseline
+
+steps:
+  - name: baseline
+    type: baseline

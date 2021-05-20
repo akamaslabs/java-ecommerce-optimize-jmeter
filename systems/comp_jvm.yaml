@@ -1,0 +1,7 @@
+name: jvm
+description: The JVM running e-commerce platform
+componentType: java-openjdk-11
+properties:
+  prometheus:
+    instance: sut_konakart
+    job: jmx

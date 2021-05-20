@@ -1,0 +1,34 @@
+name: konakart-optimize
+
+tasks:
+- name: Configure JVM options
+  operator: FileConfigurator
+  arguments:
+    source:
+      hostname: target_host
+      username: ubuntu
+      key: &KEY /home/jsmith/.ssh/akamas.key
+      path: /home/ubuntu/konakart-docker/konakart/docker-compose.yml.templ
+    target:
+      hostname: target_host
+      username: ubuntu
+      key: *KEY
+      path: /home/ubuntu/konakart-docker/konakart/docker-compose.yml
+
+- name: Restart konakart
+  operator: Executor
+  arguments:
+    command: "docker stack deploy --compose-file /home/ubuntu/konakart-docker/konakart/docker-compose.yml sut"
+    host:
+      hostname: target_host
+      username: ubuntu
+      key: *KEY
+
+- name: Performance test
+  operator: Executor
+  arguments:
+    command: "docker run --net=akamas_lab --rm --name jmeter -i -v /home/ubuntu/konakart-docker/jmeter/konakart:/tmp -w /tmp -p 9270:9270 chiabre/jmeter_plugins -t ramp_test_plan.jmx -JTARGET_HOST=target_host -JTHREADS=40 -JRAMP_SEC=300 -JRANDOM_DELAY_MAX_MS=0"
+    host:
+      hostname: target_host
+      username: ubuntu
+      key: *KEY
