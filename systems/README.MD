@@ -1,6 +1,6 @@
 # Systems
 
-This folder contains the artifacts required to model and optimize in [Akamas][Site] the execution of the KonaKart service:
+This folder contains the artifacts required to model in [Akamas][Site] the KonaKart e-commerce service:
 
 * `system.yaml`: the definition of the system under test
 * `comp_konakart.yaml`: the definition of the component modeling the KonaKart service
